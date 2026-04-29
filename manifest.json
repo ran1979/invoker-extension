@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Invoker",
+  "version": "1.0.0",
+  "description": "Minimal HTTP client",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Invoker"
+  },
+  "permissions": ["storage"],
+  "host_permissions": ["<all_urls>"]
+}

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Martian+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- URL Bar -->
+    <div class="url-bar">
+      <div class="method-wrapper">
+        <button class="method-pill" id="method-btn" aria-haspopup="listbox" aria-expanded="false">
+          <span id="method-label">GET</span>
+          <svg class="chevron" width="8" height="8" viewBox="0 0 8 8" fill="none">
+            <path d="M1.5 2.5L4 5L6.5 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <ul class="method-dropdown hidden" id="method-dropdown" role="listbox">
+          <li role="option" data-method="GET">GET</li>
+          <li role="option" data-method="POST">POST</li>
+          <li role="option" data-method="PUT">PUT</li>
+          <li role="option" data-method="DELETE">DELETE</li>
+          <li role="option" data-method="HEAD">HEAD</li>
+        </ul>
+      </div>
+      <input
+        type="text"
+        class="url-input"
+        id="url-input"
+        placeholder="https://api.example.com/…"
+        autocomplete="off"
+        spellcheck="false"
+      >
+      <button class="send-btn" id="send-btn" title="Send (Enter)">
+        <svg id="send-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2 7H12M12 7L8 3M12 7L8 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg id="loading-icon" class="hidden spin" width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4" stroke-dasharray="16 16" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Request Tabs + Panels -->
+    <div class="req-section">
+      <div class="tab-strip" id="req-tab-strip">
+        <button class="tab active" data-panel="req-headers">Headers</button>
+        <button class="tab" data-panel="req-body">Body</button>
+      </div>
+
+      <div class="panel" id="req-headers">
+        <div class="headers-list" id="req-headers-list"></div>
+        <button class="add-row-btn" id="add-header-btn">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M5 1V9M1 5H9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          Add header
+        </button>
+      </div>
+
+      <div class="panel hidden" id="req-body">
+        <textarea
+          id="body-input"
+          class="body-textarea"
+          placeholder='{ "key": "value" }'
+          spellcheck="false"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <button class="action-btn" id="save-btn" title="Save request">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M6 1L7.5 4.2L11 4.7L8.5 7.1L9.1 10.6L6 9L2.9 10.6L3.5 7.1L1 4.7L4.5 4.2L6 1Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/>
+        </svg>
+        Save
+      </button>
+      <button class="action-btn" id="toggle-saved-btn" title="Saved requests">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <rect x="1" y="2" width="10" height="1.2" rx="0.6" fill="currentColor"/>
+          <rect x="1" y="5.4" width="7" height="1.2" rx="0.6" fill="currentColor"/>
+          <rect x="1" y="8.8" width="8.5" height="1.2" rx="0.6" fill="currentColor"/>
+        </svg>
+        Saved
+      </button>
+      <button class="action-btn theme-btn" id="theme-btn" title="Toggle theme">
+        <!-- sun: shown in dark mode -->
+        <svg id="icon-sun" width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <circle cx="6" cy="6" r="2.2" stroke="currentColor" stroke-width="1.1"/>
+          <path d="M6 1v1M6 10v1M1 6h1M10 6h1M2.4 2.4l.7.7M8.9 8.9l.7.7M8.9 2.4l-.7.7M3.1 8.9l-.7.7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+        </svg>
+        <!-- moon: shown in light mode -->
+        <svg id="icon-moon" width="12" height="12" viewBox="0 0 12 12" fill="none" class="hidden">
+          <path d="M9.5 7.5A4 4 0 0 1 4.5 2.5a4 4 0 1 0 5 5z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Saved Drawer -->
+    <div class="saved-drawer hidden" id="saved-drawer">
+      <div class="saved-list" id="saved-list">
+        <p class="empty-state">No saved requests</p>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Response Section -->
+    <div class="res-section">
+      <div class="status-strip" id="status-strip">
+        <span class="status-empty" id="status-empty">invoke a request</span>
+        <div class="status-info hidden" id="status-info">
+          <span class="status-dot" id="status-dot"></span>
+          <span class="status-code" id="status-code"></span>
+          <span class="status-meta" id="status-meta"></span>
+        </div>
+        <button class="copy-btn hidden" id="copy-btn" title="Copy response body">copy</button>
+      </div>
+
+      <div class="tab-strip hidden" id="res-tab-strip">
+        <button class="tab active" data-panel="res-body">Body</button>
+        <button class="tab" data-panel="res-headers">Headers</button>
+      </div>
+
+      <div class="res-panels">
+        <div class="panel res-panel" id="res-body">
+          <pre class="res-body-pre" id="res-body-text"></pre>
+        </div>
+        <div class="panel res-panel hidden" id="res-headers">
+          <div class="headers-list readonly" id="res-headers-list"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
