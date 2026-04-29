@@ -2,10 +2,22 @@
   "manifest_version": 3,
   "name": "Invoker",
   "version": "1.0.0",
-  "description": "Minimal HTTP client",
+  "description": "Minimal HTTP client for developers. Fire GET, POST, PUT, DELETE and HEAD requests directly from the browser — with custom headers, request body, and saved requests.",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Invoker"
+    "default_title": "Invoker",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
   "permissions": ["storage"],
   "host_permissions": ["<all_urls>"]
